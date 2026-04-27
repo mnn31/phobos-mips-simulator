@@ -38,9 +38,6 @@ public final class Toolbar extends ToolBar
     /** Undo the last executed instruction. */
     private final Button backStepButton;
 
-    /** Re-initialise the simulator (re-assemble the loaded source). */
-    private final Button resetButton;
-
     /** Status label updated by the main window after each action. */
     private final Label statusLabel;
 
@@ -56,15 +53,17 @@ public final class Toolbar extends ToolBar
         runButton = makeButton("\u25B6  Run", "Run to termination (F5)");
         stepButton = makeButton("\u21E2  Step", "Execute one instruction (F7)");
         backStepButton = makeButton("\u21E0  Back", "Undo last instruction (F8)");
-        resetButton = makeButton("\u21BA  Reset", "Re-assemble & reset state (F6)");
 
         statusLabel = new Label("Ready");
         statusLabel.getStyleClass().add("toolbar-status");
 
+        // Reset is intentionally NOT on this toolbar - it sits next to
+        // Clear in the console header for proximity to where the user
+        // is reading program output.
         getItems().addAll(
             openButton, saveButton,
             new Separator(),
-            assembleButton, resetButton,
+            assembleButton,
             new Separator(),
             runButton, stepButton, backStepButton,
             new Separator(),
@@ -121,12 +120,6 @@ public final class Toolbar extends ToolBar
     public Button stepButton()
     {
         return stepButton;
-    }
-
-    /** @return the Reset button. */
-    public Button resetButton()
-    {
-        return resetButton;
     }
 
     /**

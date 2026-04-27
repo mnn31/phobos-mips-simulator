@@ -39,8 +39,11 @@ public final class ConsolePane extends BorderPane
      * invoked on the JavaFX thread whenever the user submits a line.
      *
      * @param onLineSubmitted callback receiving each user-typed line.
+     * @param onReset callback fired when the user clicks the Reset
+     *                button in the console header; same effect as the
+     *                toolbar Reset / F6.
      */
-    public ConsolePane(Consumer<String> onLineSubmitted)
+    public ConsolePane(Consumer<String> onLineSubmitted, Runnable onReset)
     {
         getStyleClass().add("console-pane");
         output = new TextArea();
@@ -66,12 +69,17 @@ public final class ConsolePane extends BorderPane
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        Button resetButton = new Button("\u21BA  Reset");
+        resetButton.getStyleClass().addAll("toolbar-button", "console-reset");
+        resetButton.setTooltip(new Tooltip("Re-assemble & reset state (F6)"));
+        resetButton.setOnAction(e -> onReset.run());
+
         Button clearButton = new Button("\u2715  Clear");
         clearButton.getStyleClass().addAll("toolbar-button", "console-clear");
         clearButton.setTooltip(new Tooltip("Clear console output"));
         clearButton.setOnAction(e -> clear());
 
-        HBox headerRow = new HBox(6, header, spacer, clearButton);
+        HBox headerRow = new HBox(6, header, spacer, resetButton, clearButton);
         headerRow.setAlignment(Pos.CENTER_LEFT);
         headerRow.setPadding(new Insets(2, 8, 2, 4));
 

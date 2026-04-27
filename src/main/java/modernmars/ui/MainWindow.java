@@ -36,7 +36,7 @@ import modernmars.core.MarsBackend.RunResult;
 public final class MainWindow
 {
     /** Title shown in the OS title bar. */
-    private static final String APP_TITLE = "Modern MARS";
+    private static final String APP_TITLE = "phobos-mips";
 
     /** Adapter to MARS' assembler/simulator. */
     private final MarsBackend backend;
@@ -66,7 +66,7 @@ public final class MainWindow
         editorPane = new EditorPane();
         registersPane = new RegistersPane();
         memoryPane = new MemoryPane();
-        consolePane = new ConsolePane(this::onConsoleInput);
+        consolePane = new ConsolePane(this::onConsoleInput, this::assemble);
         toolbar = new Toolbar();
         consoleIO = new ConsoleIO(consolePane::appendOutput);
         consoleIO.install();
@@ -127,7 +127,6 @@ public final class MainWindow
         toolbar.runButton().setOnAction(e -> runProgram());
         toolbar.stepButton().setOnAction(e -> stepProgram());
         toolbar.backStepButton().setOnAction(e -> backStepProgram());
-        toolbar.resetButton().setOnAction(e -> assemble());
     }
 
     /**
@@ -170,6 +169,7 @@ public final class MainWindow
             backend.backStep();
             registersPane.refresh(backend);
             memoryPane.refresh(backend);
+            editorPane.highlightLine(backend.currentSourceLine());
             toolbar.setStatus("Backstep \u2014 undid one instruction");
         }
         catch (Throwable th)
@@ -260,10 +260,12 @@ public final class MainWindow
             toolbar.setStatus("Assembled \u2014 ready to run");
             registersPane.refresh(backend);
             memoryPane.refresh(backend);
+            editorPane.highlightLine(backend.currentSourceLine());
         }
         else
         {
             toolbar.setStatus("Assembly failed");
+            editorPane.highlightLine(-1);
         }
     }
 
@@ -358,7 +360,8 @@ public final class MainWindow
     }
 
     /**
-     * Refreshes register/memory panels and prints any error diagnostics.
+     * Refreshes register/memory panels, updates the editor's current-
+     * line highlight, and prints any error diagnostics.
      *
      * @param result the just-returned run/step outcome.
      */
@@ -366,6 +369,16 @@ public final class MainWindow
     {
         registersPane.refresh(backend);
         memoryPane.refresh(backend);
+        // Light up the source line of the next instruction to execute,
+        // or clear the highlight when the program has finished.
+        if (result.kind() == RunResult.Kind.PAUSED)
+        {
+            editorPane.highlightLine(backend.currentSourceLine());
+        }
+        else
+        {
+            editorPane.highlightLine(-1);
+        }
         if (result.kind() == RunResult.Kind.ERROR)
         {
             for (Diagnostic d : result.errors())

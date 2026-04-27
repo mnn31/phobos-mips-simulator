@@ -2,7 +2,11 @@ package modernmars.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import mars.ProgramStatement;
 
 import mars.ErrorList;
 import mars.ErrorMessage;
@@ -41,6 +45,9 @@ public final class MarsBackend
 
     /** Whether {@link #assemble(String)} has succeeded since last reset. */
     private boolean assembled;
+
+    /** Map of text-segment address to source line number (1-based). */
+    private final Map<Integer, Integer> addressToLine = new HashMap<>();
 
     /**
      * Initialises the MARS globals. Safe to call multiple times - subsequent
@@ -91,6 +98,8 @@ public final class MarsBackend
                 /*warningsAreErrors=*/ false);
             // Reset PC so a subsequent run/step starts at the program entry.
             RegisterFile.initializeProgramCounter(/*startAtMain=*/ false);
+            // Build address -> source line map for current-line highlighting.
+            buildAddressMap();
             assembled = true;
             return AssembleResult.ok(toMessages(warnings));
         }
@@ -241,6 +250,51 @@ public final class MarsBackend
     public String currentFile()
     {
         return currentFile;
+    }
+
+    /**
+     * Returns the 1-based source line that the program counter is
+     * currently pointing at, or -1 if the PC does not correspond to a
+     * known instruction (e.g. before assemble, or after the program
+     * has terminated).
+     *
+     * @return source line number, or -1 when no mapping is available.
+     */
+    public int currentSourceLine()
+    {
+        Integer line = addressToLine.get(getProgramCounter());
+        return line == null ? -1 : line;
+    }
+
+    /**
+     * Walks the assembled program statements and rebuilds the
+     * address-to-source-line map used by {@link #currentSourceLine()}.
+     */
+    private void buildAddressMap()
+    {
+        addressToLine.clear();
+        if (program == null)
+        {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        ArrayList<ProgramStatement> stmts = program.getMachineList();
+        if (stmts == null)
+        {
+            return;
+        }
+        for (ProgramStatement s : stmts)
+        {
+            if (s == null)
+            {
+                continue;
+            }
+            int line = s.getSourceLine();
+            if (line > 0)
+            {
+                addressToLine.put(s.getAddress(), line);
+            }
+        }
     }
 
     /**

@@ -147,14 +147,27 @@ public final class RegistersPane extends BorderPane
      * Custom {@link TableRow} that adds/removes the
      * {@code register-row-changed} CSS class as the row's
      * {@code changed} flag flips.
+     *
+     * <p>JavaFX's {@link TableView} recycles rows aggressively. Every
+     * time a row gets rebound to a new model item we must detach the
+     * listener we attached to the previous item, otherwise listeners
+     * pile up unbounded - a real-world memory leak that froze the UI
+     * after a few dozen steps.</p>
      */
     private static final class ChangeAwareRow extends TableRow<Row>
     {
         /** CSS class applied when the row's value just changed. */
         private static final String CLASS = "register-row-changed";
 
+        /** The model item this row is currently bound to, if any. */
+        private Row boundItem;
+
+        /** Listener attached to {@link #boundItem}, kept so we can
+         *  detach it when the row is rebound to a different item. */
+        private javafx.beans.value.ChangeListener<Boolean> changedListener;
+
         /**
-         * Default constructor: wires the {@code changed} listener.
+         * Default constructor: wires the row-rebind listener.
          */
         ChangeAwareRow()
         {
@@ -163,14 +176,22 @@ public final class RegistersPane extends BorderPane
         }
 
         /**
-         * Re-binds this row's CSS state to {@code item}'s changed flag.
+         * Detaches any listener from the previous item, then attaches a
+         * fresh one to the new item.
          *
          * @param item the new model row, or {@code null} when the
          *             physical row goes off-screen.
          */
         private void bind(Row item)
         {
-            // Remove any stale class from a recycled row.
+            // Detach from previous binding to prevent listener leaks.
+            if (boundItem != null && changedListener != null)
+            {
+                boundItem.changedProperty().removeListener(changedListener);
+            }
+            boundItem = null;
+            changedListener = null;
+
             getStyleClass().removeAll(CLASS);
             if (item == null)
             {
@@ -180,14 +201,16 @@ public final class RegistersPane extends BorderPane
             {
                 getStyleClass().add(CLASS);
             }
-            item.changedProperty().addListener((obs, was, is) ->
+            changedListener = (obs, was, is) ->
             {
                 getStyleClass().removeAll(CLASS);
                 if (Boolean.TRUE.equals(is))
                 {
                     getStyleClass().add(CLASS);
                 }
-            });
+            };
+            item.changedProperty().addListener(changedListener);
+            boundItem = item;
         }
     }
 
