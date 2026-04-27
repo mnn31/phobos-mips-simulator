@@ -85,6 +85,14 @@ public final class MarsBackend
         assembled = false;
         currentFile = sourcePath;
         program = new MIPSprogram();
+        // CRITICAL: MARS' SimThread references Globals.program on every
+        // executed instruction (to record back-step entries). The
+        // command-line entry-point intentionally leaves it null because
+        // it doesn't want backstep logging; we DO want backstep here,
+        // so we mirror what the GUI's RunAssembleAction does and point
+        // the static field at our newly-constructed program. Without
+        // this, every step throws NullPointerException inside MARS.
+        Globals.program = program;
         try
         {
             ArrayList<String> files = FilenameFinder.getFilenameList(
