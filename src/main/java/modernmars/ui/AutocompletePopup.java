@@ -128,7 +128,8 @@ public final class AutocompletePopup
 
     /**
      * Recomputes the suggestion list from the current word under the
-     * caret. Hides the popup when there is no word or no match.
+     * caret. Hides the popup when there is no word or no match, or
+     * when the caret sits inside a comment or string literal.
      */
     private void refresh()
     {
@@ -140,6 +141,11 @@ public final class AutocompletePopup
         }
         wordStart = bounds.get()[0];
         int end = bounds.get()[1];
+        if (inCommentOrString(wordStart))
+        {
+            popup.hide();
+            return;
+        }
         String prefix = editor.getText(wordStart, end);
         if (prefix.isEmpty())
         {
@@ -256,6 +262,57 @@ public final class AutocompletePopup
     private static boolean isWordChar(char c)
     {
         return Character.isLetterOrDigit(c) || c == '_' || c == '$' || c == '.';
+    }
+
+    /**
+     * Returns whether the offset {@code pos} sits inside a MIPS-style
+     * line comment (i.e. there is an unquoted {@code #} earlier on the
+     * same line) or inside an unterminated double-quoted string on the
+     * current line.
+     *
+     * <p>This is a deliberately small lexer rather than a regex: the
+     * editor text changes on every keystroke, so the cost of scanning
+     * one line per refresh is negligible and the implementation
+     * handles backslash escapes correctly.</p>
+     *
+     * @param pos absolute offset in the editor text.
+     * @return {@code true} if {@code pos} is inside a comment or
+     *         string literal and the popup should be suppressed.
+     */
+    private boolean inCommentOrString(int pos)
+    {
+        String text = editor.getText();
+        if (text == null || pos > text.length())
+        {
+            return false;
+        }
+        int lineStart = pos;
+        while (lineStart > 0 && text.charAt(lineStart - 1) != '\n')
+        {
+            lineStart--;
+        }
+        boolean inString = false;
+        for (int i = lineStart; i < pos; i++)
+        {
+            char c = text.charAt(i);
+            if (c == '\\' && i + 1 < pos)
+            {
+                // Skip the escaped character so e.g. \" doesn't toggle
+                // the string state.
+                i++;
+                continue;
+            }
+            if (c == '"')
+            {
+                inString = !inString;
+                continue;
+            }
+            if (!inString && c == '#')
+            {
+                return true;
+            }
+        }
+        return inString;
     }
 
     /**

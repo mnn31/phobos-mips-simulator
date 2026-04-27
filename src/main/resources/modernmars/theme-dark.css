@@ -1,32 +1,43 @@
 /*
- * Modern MARS dark theme - Catppuccin Mocha palette.
+ * phobos-mips dark theme - Dracula palette.
  *
- * Deliberately distinct from any colour scheme used by classic MARS or
- * its forks: pastel lavender, pink, peach, and teal on a deep eggplant
- * background. All colours live in CSS variables at the top so retheming
- * is a one-line change.
+ * Three distinct surface levels for clear depth (window < panes <
+ * inputs), saturated syntax colors that read clearly on the deep
+ * blue-purple background, and a single accent (purple) for hover /
+ * focus / selection states.
+ *
+ * Palette source: https://draculatheme.com/contribute
  */
 
 .root {
-    /* surfaces */
-    -fx-base-bg:        #1e1e2e;   /* base */
-    -fx-pane-bg:        #181825;   /* mantle - panel chrome */
-    -fx-pane-bg-alt:    #313244;   /* surface0 - hover / inputs */
-    -fx-pane-bg-deep:   #11111b;   /* crust  - console */
-    -fx-border:         #45475a;   /* surface1 */
-    -fx-fg:             #cdd6f4;   /* text */
-    -fx-fg-muted:       #a6adc8;   /* subtext0 */
-    -fx-accent:         #b4befe;   /* lavender */
-    -fx-accent-strong:  #cba6f7;   /* mauve */
+    /* Surface hierarchy:
+     *   pane-bg-deep < base-bg < pane-bg < pane-bg-alt
+     * panes sit on top of the window, inputs sit on top of panes. */
+    -fx-pane-bg-deep:   #191a21;   /* console output, deepest */
+    -fx-base-bg:        #21222c;   /* window background */
+    -fx-pane-bg:        #282a36;   /* dracula bg - editor + panels */
+    -fx-pane-bg-alt:    #44475a;   /* dracula current-line - inputs/buttons */
+    -fx-border:         #6272a4;   /* dracula comment - visible on dark */
+    -fx-fg:             #f8f8f2;   /* dracula foreground */
+    -fx-fg-muted:       #b8bbc6;   /* lightened comment */
+    -fx-accent:         #bd93f9;   /* dracula purple */
+    -fx-accent-strong:  #ff79c6;   /* dracula pink */
 
-    /* syntax */
-    -fx-mips-comment:     #6c7086;   /* overlay0 - subdued */
-    -fx-mips-string:      #a6e3a1;   /* green */
-    -fx-mips-directive:   #94e2d5;   /* teal */
-    -fx-mips-label:       #fab387;   /* peach - warm, easy to spot */
-    -fx-mips-register:    #f5c2e7;   /* pink */
-    -fx-mips-instruction: #b4befe;   /* lavender */
-    -fx-mips-number:      #f9e2af;   /* yellow */
+    /* Syntax (Dracula one-liner mappings):
+     *   comment   - faded purple-gray
+     *   string    - yellow
+     *   directive - pink                    (.text, .data, .globl)
+     *   label     - green                   (main:, loop:)
+     *   register  - orange                  ($t0, $a0, $sp)
+     *   instruction - purple                (addu, beq, lw)
+     *   number    - cyan                    (10, 0x10010000) */
+    -fx-mips-comment:     #6272a4;
+    -fx-mips-string:      #f1fa8c;
+    -fx-mips-directive:   #ff79c6;
+    -fx-mips-label:       #50fa7b;
+    -fx-mips-register:    #ffb86c;
+    -fx-mips-instruction: #bd93f9;
+    -fx-mips-number:      #8be9fd;
 
     -fx-background-color: -fx-base-bg;
     -fx-text-fill: -fx-fg;
@@ -36,27 +47,29 @@
 
 /* ---------- toolbar ---------- */
 .modern-toolbar {
-    -fx-background-color: linear-gradient(to bottom, #313244, #1e1e2e);
+    -fx-background-color: linear-gradient(to bottom, #2c2e3b, #21222c);
     -fx-padding: 8 12 8 12;
     -fx-spacing: 6;
     -fx-border-color: transparent transparent -fx-border transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .toolbar-button {
     -fx-background-color: -fx-pane-bg-alt;
     -fx-text-fill: -fx-fg;
     -fx-padding: 6 14 6 14;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: transparent;
     -fx-cursor: hand;
 }
 .toolbar-button:hover {
     -fx-background-color: -fx-accent;
-    -fx-text-fill: #1e1e2e;
+    -fx-text-fill: #21222c;
 }
 .toolbar-button:pressed {
     -fx-background-color: -fx-accent-strong;
-    -fx-text-fill: #1e1e2e;
+    -fx-text-fill: #21222c;
 }
 
 .toolbar-status {
@@ -67,11 +80,11 @@
 
 /* ---------- pane chrome ---------- */
 .pane-header {
-    -fx-text-fill: -fx-accent;
+    -fx-text-fill: -fx-accent-strong;
     -fx-padding: 6 8 6 10;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-letter-spacing: 0.1em;
+    -fx-letter-spacing: 0.12em;
 }
 
 .editor-pane,
@@ -98,39 +111,29 @@
     -fx-font-size: 13px;
 }
 
-/* Default fill for any text in the code area that does NOT carry one
-   of the .mips-* style classes. Without this rule JavaFX falls back to
-   black, making freshly-typed text invisible against the dark editor. */
+/* Default fill for any unstyled text in the editor.
+ * Critical: without this, default JavaFX fill is black -> invisible. */
 .mips-editor .text {
     -fx-fill: -fx-fg;
 }
 
 .mips-editor .caret {
-    -fx-stroke: -fx-accent;
-    -fx-stroke-width: 1.5;
+    -fx-stroke: -fx-accent-strong;
+    -fx-stroke-width: 2;
 }
 
 .mips-editor .selection {
-    -fx-fill: derive(-fx-accent, -55%);
+    -fx-fill: derive(-fx-accent, -50%);
 }
 
 .mips-editor .lineno {
     -fx-background-color: -fx-pane-bg-deep;
     -fx-text-fill: -fx-fg-muted;
-    -fx-padding: 0 8 0 6;
+    -fx-padding: 0 10 0 8;
 }
 
-/* Current-PC source line: a distinct lavender wash so the user can
-   see exactly which instruction will execute on the next Step. */
-.mips-editor .paragraph-box:has-caret,
-.mips-editor .current-line {
-    -fx-background-color: derive(-fx-accent, -65%);
-}
-
-/* RichTextFX writes the assigned style class directly on the <text>
-   element. We must qualify with .mips-editor .text to outrank the
-   default-fill rule above (which is specificity 0,2,0); plain
-   .mips-comment is only 0,1,0 and would lose, leaving everything gray. */
+/* Syntax classes - qualified to outrank the .text default-fill rule.
+ * .mips-editor .text.X has specificity 0,3,0 vs default's 0,2,0. */
 .mips-editor .text.mips-comment     { -fx-fill: -fx-mips-comment; -fx-font-style: italic; }
 .mips-editor .text.mips-string      { -fx-fill: -fx-mips-string; }
 .mips-editor .text.mips-directive   { -fx-fill: -fx-mips-directive; -fx-font-weight: bold; }
@@ -139,13 +142,20 @@
 .mips-editor .text.mips-instruction { -fx-fill: -fx-mips-instruction; -fx-font-weight: bold; }
 .mips-editor .text.mips-number      { -fx-fill: -fx-mips-number; }
 
+/* Current PC line - subtle purple wash, different enough from selection
+ * that they're visually separable when both are active. */
+.mips-editor .current-line {
+    -fx-background-color: rgba(189, 147, 249, 0.18);
+}
+
 /* ---------- autocomplete popup ---------- */
 .autocomplete-list {
     -fx-background-color: -fx-pane-bg-alt;
     -fx-background-radius: 8;
-    -fx-border-color: -fx-border;
+    -fx-border-color: -fx-accent;
     -fx-border-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0.2, 0, 4);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 14, 0.25, 0, 5);
     -fx-padding: 4;
 }
 .autocomplete-list .list-cell {
@@ -160,7 +170,7 @@
 .autocomplete-list .list-cell:filled:selected .autocomplete-name,
 .autocomplete-list .list-cell:filled:selected .autocomplete-hint,
 .autocomplete-list .list-cell:filled:selected .autocomplete-tag {
-    -fx-text-fill: -fx-base-bg;
+    -fx-text-fill: -fx-pane-bg;
 }
 .autocomplete-name {
     -fx-text-fill: -fx-fg;
@@ -172,7 +182,7 @@
     -fx-font-size: 11px;
 }
 .autocomplete-tag {
-    -fx-text-fill: -fx-base-bg;
+    -fx-text-fill: #21222c;
     -fx-font-size: 10px;
     -fx-padding: 1 6 1 6;
     -fx-background-radius: 3;
@@ -201,8 +211,9 @@
     -fx-border-width: 0 0 1 0;
 }
 .table-view .column-header .label {
-    -fx-text-fill: -fx-accent;
+    -fx-text-fill: -fx-accent-strong;
     -fx-font-weight: bold;
+    -fx-letter-spacing: 0.05em;
 }
 .table-row-cell {
     -fx-background-color: -fx-pane-bg;
@@ -212,25 +223,25 @@
     -fx-background-color: derive(-fx-pane-bg, 4%);
 }
 .table-row-cell:hover {
-    -fx-background-color: derive(-fx-accent, -65%);
+    -fx-background-color: derive(-fx-accent, -60%);
 }
 .table-row-cell:selected {
-    -fx-background-color: derive(-fx-accent, -50%);
+    -fx-background-color: derive(-fx-accent, -45%);
     -fx-text-fill: white;
-}
-/* Register row that just changed - subtle peach tint, like the yellow
-   highlight in classic MARS but matching our palette. */
-.register-row-changed {
-    -fx-background-color: derive(-fx-mips-label, -55%);
-}
-.register-row-changed .table-cell {
-    -fx-text-fill: -fx-mips-label;
-    -fx-font-weight: bold;
 }
 .table-cell {
     -fx-text-fill: -fx-fg;
     -fx-font-family: "JetBrains Mono", "Menlo", monospace;
     -fx-padding: 4 8 4 8;
+}
+/* Register row whose value just changed - orange (Dracula's "register"
+ * accent) so it's instantly distinguishable from selection/hover. */
+.register-row-changed {
+    -fx-background-color: derive(-fx-mips-register, -55%);
+}
+.register-row-changed .table-cell {
+    -fx-text-fill: -fx-mips-register;
+    -fx-font-weight: bold;
 }
 
 /* ---------- console ---------- */
@@ -250,6 +261,12 @@
     -fx-font-family: "JetBrains Mono", "Menlo", monospace;
     -fx-padding: 6 10 6 10;
     -fx-background-radius: 6;
+    -fx-border-color: -fx-border;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+.console-input:focused {
+    -fx-border-color: -fx-accent;
 }
 .console-input-row {
     -fx-padding: 6 8 8 8;
@@ -265,6 +282,12 @@
     -fx-font-family: "JetBrains Mono", "Menlo", monospace;
     -fx-padding: 4 8 4 8;
     -fx-background-radius: 4;
+    -fx-border-color: -fx-border;
+    -fx-border-radius: 4;
+    -fx-border-width: 1;
+}
+.memory-address-field:focused {
+    -fx-border-color: -fx-accent;
 }
 
 /* ---------- scroll bars ---------- */
@@ -272,7 +295,7 @@
     -fx-background-color: transparent;
 }
 .scroll-bar .thumb {
-    -fx-background-color: derive(-fx-pane-bg-alt, 30%);
+    -fx-background-color: -fx-pane-bg-alt;
     -fx-background-radius: 6;
 }
 .scroll-bar .thumb:hover {
