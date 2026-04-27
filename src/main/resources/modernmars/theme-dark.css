@@ -120,6 +120,13 @@
     -fx-padding: 0 8 0 6;
 }
 
+/* Current-PC source line: a distinct lavender wash so the user can
+   see exactly which instruction will execute on the next Step. */
+.mips-editor .paragraph-box:has-caret,
+.mips-editor .current-line {
+    -fx-background-color: derive(-fx-accent, -65%);
+}
+
 /* RichTextFX writes the assigned style class directly on the <text>
    element. We must qualify with .mips-editor .text to outrank the
    default-fill rule above (which is specificity 0,2,0); plain
