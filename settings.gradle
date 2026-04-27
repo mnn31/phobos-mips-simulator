@@ -1,0 +1,13 @@
+/*
+ * Settings file for Modern MARS.
+ *
+ * The foojay-resolver-convention plugin lets Gradle automatically
+ * download a matching JDK when the developer's machine does not have
+ * one installed. This means a fresh `./gradlew run` works even on a
+ * machine with only JDK 11 already installed.
+ */
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+rootProject.name = 'modern-mars'

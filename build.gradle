@@ -1,0 +1,62 @@
+/*
+ * Modern MARS - JavaFX rewrite of the MARS MIPS Simulator UI.
+ * Reuses the original MARS assembler + simulator core (Mars4_5.jar in libs/).
+ *
+ * Run:    ./gradlew run
+ * Build:  ./gradlew build
+ */
+plugins {
+    id 'application'
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group = 'modernmars'
+version = '0.1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+javafx {
+    version = '21.0.4'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    // The original MARS jar - we reuse its assembler & simulator classes.
+    implementation files('libs/Mars4_5.jar')
+
+    // RichTextFX for the syntax-highlighted code editor.
+    implementation 'org.fxmisc.richtext:richtextfx:0.11.2'
+}
+
+application {
+    mainClass = 'modernmars.App'
+    applicationDefaultJvmArgs = [
+        // RichTextFX uses sun.misc.Unsafe-style reflection on a few JDK classes.
+        '--add-opens=java.base/java.lang=ALL-UNNAMED',
+        '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED'
+    ]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:none']
+}
+
+// Convenience: print where the editor expects the lab folder to be.
+tasks.register('labInfo') {
+    doLast {
+        println "Lab .asm files live in: ${rootProject.projectDir.parent}/lab"
+    }
+}

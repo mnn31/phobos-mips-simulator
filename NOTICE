@@ -1,0 +1,61 @@
+phobos-mips
+===========
+
+This project bundles and depends on third-party software. Third-party
+components are listed below with their original copyright notices and
+licenses.
+
+--------------------------------------------------------------------
+MARS - MIPS Assembler and Runtime Simulator (libs/Mars4_5.jar)
+--------------------------------------------------------------------
+
+phobos-mips uses the MARS assembler and simulator as a library. The
+file `libs/Mars4_5.jar` is included verbatim and unmodified. MARS was
+developed by Pete Sanderson (Otterbein University) and Kenneth Vollmar
+(Missouri State University). See:
+
+  https://courses.missouristate.edu/KenVollmar/MARS/
+  https://github.com/dpetersanderson/MARS
+
+The full MARS license, copied from MARSlicense.txt inside Mars4_5.jar:
+
+    Copyright (c) 2003-2013,  Pete Sanderson and Kenneth Vollmar
+
+    Developed by Pete Sanderson (psanderson@otterbein.edu)
+    and Kenneth Vollmar (kenvollmar@missouristate.edu)
+
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject
+    to the following conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+    ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+    (MIT license, http://www.opensource.org/licenses/mit-license.html)
+
+--------------------------------------------------------------------
+JavaFX (org.openjfx:javafx-*)
+--------------------------------------------------------------------
+
+JavaFX is licensed under GPLv2 with the Classpath exception. See:
+  https://github.com/openjdk/jfx/blob/master/LICENSE
+
+--------------------------------------------------------------------
+RichTextFX (org.fxmisc.richtext:richtextfx)
+--------------------------------------------------------------------
+
+RichTextFX is licensed under BSD 2-Clause and GPLv2-with-Classpath
+exception (dual). See:
+  https://github.com/FXMisc/RichTextFX/blob/master/LICENSE

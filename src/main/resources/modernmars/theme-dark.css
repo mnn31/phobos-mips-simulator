@@ -1,0 +1,281 @@
+/*
+ * Modern MARS dark theme - Catppuccin Mocha palette.
+ *
+ * Deliberately distinct from any colour scheme used by classic MARS or
+ * its forks: pastel lavender, pink, peach, and teal on a deep eggplant
+ * background. All colours live in CSS variables at the top so retheming
+ * is a one-line change.
+ */
+
+.root {
+    /* surfaces */
+    -fx-base-bg:        #1e1e2e;   /* base */
+    -fx-pane-bg:        #181825;   /* mantle - panel chrome */
+    -fx-pane-bg-alt:    #313244;   /* surface0 - hover / inputs */
+    -fx-pane-bg-deep:   #11111b;   /* crust  - console */
+    -fx-border:         #45475a;   /* surface1 */
+    -fx-fg:             #cdd6f4;   /* text */
+    -fx-fg-muted:       #a6adc8;   /* subtext0 */
+    -fx-accent:         #b4befe;   /* lavender */
+    -fx-accent-strong:  #cba6f7;   /* mauve */
+
+    /* syntax */
+    -fx-mips-comment:     #6c7086;   /* overlay0 - subdued */
+    -fx-mips-string:      #a6e3a1;   /* green */
+    -fx-mips-directive:   #94e2d5;   /* teal */
+    -fx-mips-label:       #fab387;   /* peach - warm, easy to spot */
+    -fx-mips-register:    #f5c2e7;   /* pink */
+    -fx-mips-instruction: #b4befe;   /* lavender */
+    -fx-mips-number:      #f9e2af;   /* yellow */
+
+    -fx-background-color: -fx-base-bg;
+    -fx-text-fill: -fx-fg;
+    -fx-font-family: "Inter", "Segoe UI", "SF Pro Text", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13px;
+}
+
+/* ---------- toolbar ---------- */
+.modern-toolbar {
+    -fx-background-color: linear-gradient(to bottom, #313244, #1e1e2e);
+    -fx-padding: 8 12 8 12;
+    -fx-spacing: 6;
+    -fx-border-color: transparent transparent -fx-border transparent;
+}
+
+.toolbar-button {
+    -fx-background-color: -fx-pane-bg-alt;
+    -fx-text-fill: -fx-fg;
+    -fx-padding: 6 14 6 14;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+}
+.toolbar-button:hover {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: #1e1e2e;
+}
+.toolbar-button:pressed {
+    -fx-background-color: -fx-accent-strong;
+    -fx-text-fill: #1e1e2e;
+}
+
+.toolbar-status {
+    -fx-text-fill: -fx-fg-muted;
+    -fx-padding: 0 4 0 14;
+    -fx-font-style: italic;
+}
+
+/* ---------- pane chrome ---------- */
+.pane-header {
+    -fx-text-fill: -fx-accent;
+    -fx-padding: 6 8 6 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.1em;
+}
+
+.editor-pane,
+.registers-pane,
+.memory-pane,
+.console-pane {
+    -fx-background-color: -fx-pane-bg;
+    -fx-border-color: -fx-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.split-pane,
+.split-pane *.split-pane-divider {
+    -fx-background-color: -fx-base-bg;
+    -fx-padding: 0 4 0 4;
+}
+
+/* ---------- editor / code area ---------- */
+.mips-editor {
+    -fx-background-color: -fx-pane-bg;
+    -fx-font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+    -fx-font-size: 13px;
+}
+
+/* Default fill for any text in the code area that does NOT carry one
+   of the .mips-* style classes. Without this rule JavaFX falls back to
+   black, making freshly-typed text invisible against the dark editor. */
+.mips-editor .text {
+    -fx-fill: -fx-fg;
+}
+
+.mips-editor .caret {
+    -fx-stroke: -fx-accent;
+    -fx-stroke-width: 1.5;
+}
+
+.mips-editor .selection {
+    -fx-fill: derive(-fx-accent, -55%);
+}
+
+.mips-editor .lineno {
+    -fx-background-color: -fx-pane-bg-deep;
+    -fx-text-fill: -fx-fg-muted;
+    -fx-padding: 0 8 0 6;
+}
+
+/* RichTextFX writes the assigned style class directly on the <text>
+   element. We must qualify with .mips-editor .text to outrank the
+   default-fill rule above (which is specificity 0,2,0); plain
+   .mips-comment is only 0,1,0 and would lose, leaving everything gray. */
+.mips-editor .text.mips-comment     { -fx-fill: -fx-mips-comment; -fx-font-style: italic; }
+.mips-editor .text.mips-string      { -fx-fill: -fx-mips-string; }
+.mips-editor .text.mips-directive   { -fx-fill: -fx-mips-directive; -fx-font-weight: bold; }
+.mips-editor .text.mips-label       { -fx-fill: -fx-mips-label; -fx-font-weight: bold; }
+.mips-editor .text.mips-register    { -fx-fill: -fx-mips-register; }
+.mips-editor .text.mips-instruction { -fx-fill: -fx-mips-instruction; -fx-font-weight: bold; }
+.mips-editor .text.mips-number      { -fx-fill: -fx-mips-number; }
+
+/* ---------- autocomplete popup ---------- */
+.autocomplete-list {
+    -fx-background-color: -fx-pane-bg-alt;
+    -fx-background-radius: 8;
+    -fx-border-color: -fx-border;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0.2, 0, 4);
+    -fx-padding: 4;
+}
+.autocomplete-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 4 8 4 8;
+}
+.autocomplete-list .list-cell:filled:selected,
+.autocomplete-list .list-cell:filled:selected:focused {
+    -fx-background-color: -fx-accent;
+    -fx-background-radius: 4;
+}
+.autocomplete-list .list-cell:filled:selected .autocomplete-name,
+.autocomplete-list .list-cell:filled:selected .autocomplete-hint,
+.autocomplete-list .list-cell:filled:selected .autocomplete-tag {
+    -fx-text-fill: -fx-base-bg;
+}
+.autocomplete-name {
+    -fx-text-fill: -fx-fg;
+    -fx-font-family: "JetBrains Mono", "Menlo", monospace;
+    -fx-font-weight: bold;
+}
+.autocomplete-hint {
+    -fx-text-fill: -fx-fg-muted;
+    -fx-font-size: 11px;
+}
+.autocomplete-tag {
+    -fx-text-fill: -fx-base-bg;
+    -fx-font-size: 10px;
+    -fx-padding: 1 6 1 6;
+    -fx-background-radius: 3;
+    -fx-font-weight: bold;
+}
+.autocomplete-tag-arith   { -fx-background-color: -fx-mips-instruction; }
+.autocomplete-tag-logic   { -fx-background-color: -fx-mips-instruction; }
+.autocomplete-tag-mem     { -fx-background-color: -fx-mips-directive; }
+.autocomplete-tag-branch  { -fx-background-color: -fx-mips-label; }
+.autocomplete-tag-jump    { -fx-background-color: -fx-mips-label; }
+.autocomplete-tag-sys     { -fx-background-color: -fx-mips-number; }
+.autocomplete-tag-reg     { -fx-background-color: -fx-mips-register; }
+.autocomplete-tag-dir     { -fx-background-color: -fx-mips-directive; }
+.autocomplete-tag-snippet { -fx-background-color: -fx-mips-string; }
+
+/* ---------- tables (registers / memory) ---------- */
+.table-view {
+    -fx-background-color: -fx-pane-bg;
+    -fx-table-cell-border-color: transparent;
+}
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: -fx-pane-bg-alt;
+    -fx-text-fill: -fx-fg-muted;
+    -fx-border-color: -fx-border;
+    -fx-border-width: 0 0 1 0;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -fx-accent;
+    -fx-font-weight: bold;
+}
+.table-row-cell {
+    -fx-background-color: -fx-pane-bg;
+    -fx-text-fill: -fx-fg;
+}
+.table-row-cell:odd {
+    -fx-background-color: derive(-fx-pane-bg, 4%);
+}
+.table-row-cell:hover {
+    -fx-background-color: derive(-fx-accent, -65%);
+}
+.table-row-cell:selected {
+    -fx-background-color: derive(-fx-accent, -50%);
+    -fx-text-fill: white;
+}
+/* Register row that just changed - subtle peach tint, like the yellow
+   highlight in classic MARS but matching our palette. */
+.register-row-changed {
+    -fx-background-color: derive(-fx-mips-label, -55%);
+}
+.register-row-changed .table-cell {
+    -fx-text-fill: -fx-mips-label;
+    -fx-font-weight: bold;
+}
+.table-cell {
+    -fx-text-fill: -fx-fg;
+    -fx-font-family: "JetBrains Mono", "Menlo", monospace;
+    -fx-padding: 4 8 4 8;
+}
+
+/* ---------- console ---------- */
+.console-output {
+    -fx-control-inner-background: -fx-pane-bg-deep;
+    -fx-text-fill: -fx-fg;
+    -fx-font-family: "JetBrains Mono", "Menlo", monospace;
+    -fx-font-size: 12px;
+}
+.console-output .content {
+    -fx-background-color: -fx-pane-bg-deep;
+}
+.console-input {
+    -fx-background-color: -fx-pane-bg-alt;
+    -fx-text-fill: -fx-fg;
+    -fx-prompt-text-fill: -fx-fg-muted;
+    -fx-font-family: "JetBrains Mono", "Menlo", monospace;
+    -fx-padding: 6 10 6 10;
+    -fx-background-radius: 6;
+}
+.console-input-row {
+    -fx-padding: 6 8 8 8;
+}
+
+/* ---------- memory pane ---------- */
+.inline-label {
+    -fx-text-fill: -fx-fg-muted;
+}
+.memory-address-field {
+    -fx-background-color: -fx-pane-bg-alt;
+    -fx-text-fill: -fx-fg;
+    -fx-font-family: "JetBrains Mono", "Menlo", monospace;
+    -fx-padding: 4 8 4 8;
+    -fx-background-radius: 4;
+}
+
+/* ---------- scroll bars ---------- */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: derive(-fx-pane-bg-alt, 30%);
+    -fx-background-radius: 6;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: -fx-accent;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
